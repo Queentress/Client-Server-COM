@@ -20,8 +20,16 @@ inline int Server::Connection() {
 
 	sockaddr_in server_addr;
 	server_addr.sin_family = AF_INET;
-	//server_addr.sin_addr = INADDR_ANY;
+	server_addr.sin_addr.s_addr = INADDR_ANY;
 	server_addr.sin_port = htons(443);
+
+	if (bind(sSocket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr)) == SOCKET_ERROR) {
+		std::cerr << "There was an error on binding the socket: " << WSAGetLastError() << std::endl;
+		std::cout << "Closing socket and performing a cleanup due to an error!" << std::endl;
+		closesocket(sSocket);
+		WSACleanup();
+		return -1;
+	}
 
 	if (listen(sSocket, SOMAXCONN) == SOCKET_ERROR) {
 		std::cerr << "There was an error on the socket listener: " << WSAGetLastError() << std::endl;
@@ -52,7 +60,6 @@ inline int Server::Connection() {
 	closesocket(sSocket);
 	closesocket(cSocket);
 	WSACleanup();
-
 }
 
 int main() {
