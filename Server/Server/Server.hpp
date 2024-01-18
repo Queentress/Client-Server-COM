@@ -9,11 +9,10 @@ namespace TCP_Server_COM {
 	{
 	public:
 		Server();
-		~Server();
-		void Connection();
+		inline int Connection();
 	private:
 		WSADATA dat;
 		SOCKET sSocket;
-		const char buffer[1024];
+		SOCKET cSocket;
 	};
 }
