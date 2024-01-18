@@ -15,9 +15,9 @@ inline int Client::ConnectToServer(const char* msg) {
 	}
 	this->server_addr.sin_family = AF_INET;
 	this->server_addr.sin_port = htons(443);
-	this->server_addr.sin_addr.s_addr = inet_addr("192.168.8.115");
+	this->server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-	if (bind(cSocket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr)) == SOCKET_ERROR) {
+	if (connect(cSocket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr)) == SOCKET_ERROR) {
 		std::cerr << "There was an error while connecting to the server: " << WSAGetLastError() << std::endl;
 		std::cout << "Closing socket and performing a cleanup due to an error!" << std::endl;
 		closesocket(cSocket);
@@ -25,15 +25,15 @@ inline int Client::ConnectToServer(const char* msg) {
 		return -1;
 	}
 	std::cout << "Successfully connected to the server!" << std::endl;
-	try {
-		send(cSocket, msg, strlen(msg), 0);
-		closesocket(cSocket);
-		WSACleanup();
-	}
-	catch (std::exception& e) {
-		std::cout << "An exception was thrown when trying to send a message and clean up everything after: " << e.what();
-	}
 	
+	int sRes = send(cSocket, msg, strlen(msg), 0);
+	if (sRes == SOCKET_ERROR) {
+		std::cout << "Error sending message: " << WSAGetLastError() << std::endl;
+	}
+	closesocket(cSocket);
+	WSACleanup();
+
+	return (sRes == SOCKET_ERROR) ? -1 : 0;
 }
 
 

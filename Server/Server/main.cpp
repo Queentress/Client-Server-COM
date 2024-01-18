@@ -54,12 +54,19 @@ inline int Server::Connection() {
 
 	char buffer[1024];
 	memset(buffer, 0, sizeof(buffer));
-	int bytes = recv(cSocket, buffer, sizeof(buffer), 0);
-	std::cout << "Received a message from the client: " << buffer << std::endl;
-
-	closesocket(sSocket);
+	int recMsg = recv(cSocket, buffer, sizeof(buffer), 0);
+	if (recMsg == SOCKET_ERROR) {
+		std::cout << "There was an error on receiving the message from the connected client: " << WSAGetLastError() << std::endl;
+	}
+	else {
+		std::cout << "Received a message from the client: " << buffer << std::endl;
+	}
 	closesocket(cSocket);
+	closesocket(sSocket);
 	WSACleanup();
+
+	return (recMsg == SOCKET_ERROR) ? -1 : 0;
+	
 }
 
 int main() {
