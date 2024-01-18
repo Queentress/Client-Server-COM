@@ -1,0 +1,3 @@
+﻿lld-link : error : undefined symbol: main
+  >>> referenced by D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+  >>>               msvcrtd.lib(exe_main.obj):(int __cdecl invoke_main(void))
